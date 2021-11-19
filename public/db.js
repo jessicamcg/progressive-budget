@@ -2,7 +2,7 @@ let db;
 let budgetVersion;
 
 // Create a new db request for a "budget" database.
-const request = indexedDB.open('BudgetDB', budgetVersion || 21);
+const request = indexedDB.open('BudgetDB', budgetVersion);
 
 request.onupgradeneeded = function (e) {
   console.log('Upgrade needed in IndexDB');
@@ -20,11 +20,10 @@ request.onupgradeneeded = function (e) {
 };
 
 request.onerror = function (e) {
-  console.log(`Woops! ${e.target.errorCode}`);
+  console.log(`Error: ${e.target.errorCode}`);
 };
 
 function checkDatabase() {
-  console.log('check db invoked');
 
   // Open a transaction on your BudgetStore db
   let transaction = db.transaction(['BudgetStore'], 'readwrite');
@@ -59,7 +58,7 @@ function checkDatabase() {
 
             // Clear existing entries because our bulk add was successful
             currentStore.clear();
-            console.log('Clearing store 🧹');
+            console.log('Clearing store');
           }
         });
     }
@@ -67,12 +66,11 @@ function checkDatabase() {
 }
 
 request.onsuccess = function (e) {
-  console.log('success');
   db = e.target.result;
 
   // Check if app is online before reading from db
   if (navigator.onLine) {
-    console.log('Backend online! 🗄️');
+    console.log('Backend online!');
     checkDatabase();
   }
 };
